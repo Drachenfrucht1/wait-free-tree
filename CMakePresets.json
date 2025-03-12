@@ -1,0 +1,156 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Development",
+            "binaryDir": "build",
+            "environment": {
+                "COMMON_WARNINGS": "-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wnon-virtual-dtor",
+                "DEV_ERROR_WARNINGS": "-Wduplicated-branches -Wduplicated-cond -Wlogical-op -Wold-style-cast -Wuseless-cast -Wcast-align -Wunreachable-code -Wundef -Wformat=2",
+                "SUGGESTION_WARNINGS": "-Wnoexcept -Wsuggest-override -Wmissing-noreturn",
+                "PERFORMANCE_WARNINGS": "-Wdouble-promotion -Wunsafe-loop-optimizations -Wdisabled-optimization",
+                "WARNINGS": "$env{COMMON_WARNINGS} $env{DEV_ERROR_WARNINGS} $env{SUGGESTION_WARNINGS} $env{PERFORMANCE_WARNINGS}",
+                "DEV_OPTIONS": "-gdwarf-3 -g3 -O3 -march=native -flto=auto -fuse-linker-plugin -fno-fat-lto-objects"
+            },
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "-fdiagnostics-color=always -fdiagnostics-show-template-tree $env{DEV_OPTIONS} $env{WARNINGS}",
+                "CMAKE_CXX_SCAN_FOR_MODULES": false
+            },
+            "warnings": {
+                "dev": true,
+                "deprecated": true,
+                "uninitialized": true
+            }
+        }, {
+            "name": "release",
+            "displayName": "Release Build",
+            "binaryDir": "build-release",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS": "-DNDEBUG -gdwarf-3 -O3 -march=native -flto=auto -fuse-linker-plugin -fno-fat-lto-objects $env{WARNINGS}",
+                "CMAKE_INTERPROCEDURAL_OPTIMIZATION": true
+            }
+        }, {
+            "name": "debug",
+            "displayName": "Debug Build",
+            "binaryDir": "build-debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-g -Og -march=native $env{WARNINGS}"
+            }
+        }, {
+            "name": "asan",
+            "displayName": "Address Sanitizer",
+            "binaryDir": "build-asan",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-fsanitize=address,pointer-compare,pointer-subtract -fsanitize-address-use-after-scope -fstack-protector-strong $env{DEV_OPTIONS} $env{WARNINGS}"
+            }
+        }, {
+            "name": "ubsan",
+            "displayName": "Undefined Behavior Sanitizer",
+            "binaryDir": "build-ubsan",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-fsanitize=undefined,float-divide-by-zero,float-cast-overflow $env{DEV_OPTIONS} $env{WARNINGS}"
+            }
+        }, {
+            "name": "tsan",
+            "displayName": "Thread Sanitizer",
+            "binaryDir": "build-tsan",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-fsanitize=thread $env{DEV_OPTIONS} $env{WARNINGS}"
+            }
+        }, {
+            "name": "msan",
+            "displayName": "Memory Sanitizer",
+            "binaryDir": "build-msan",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-fsanitize=memory $env{DEV_OPTIONS} $env{WARNINGS}"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "displayName": "Default Development",
+            "configurePreset": "default"
+        }, {
+            "name": "release",
+            "displayName": "Release Build",
+            "configurePreset": "release",
+            "inherits": "default"
+        }, {
+            "name": "debug",
+            "displayName": "Debug Build",
+            "configurePreset": "debug",
+            "inherits": "default"
+        }, {
+            "name": "asan",
+            "displayName": "Address Sanitizer",
+            "configurePreset": "asan",
+            "inherits": "default"
+        }, {
+            "name": "ubsan",
+            "displayName": "Undefined Behavior Sanitizer",
+            "configurePreset": "ubsan",
+            "inherits": "default"
+        }, {
+            "name": "tsan",
+            "displayName": "Thread Sanitizer",
+            "configurePreset": "tsan",
+            "inherits": "default"
+        }, {
+            "name": "msan",
+            "displayName": "Memory Sanitizer",
+            "configurePreset": "msan",
+            "inherits": "default"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "displayName": "Default Development",
+            "configurePreset": "default"
+        }, {
+            "name": "release",
+            "displayName": "Release Build",
+            "configurePreset": "release",
+            "inherits": "default"
+        }, {
+            "name": "debug",
+            "displayName": "Debug Build",
+            "configurePreset": "debug",
+            "inherits": "default"
+        }, {
+            "name": "asan",
+            "displayName": "Address Sanitizer",
+            "configurePreset": "asan",
+            "inherits": "default",
+            "environment": {
+                "ASAN_OPTIONS": "detect_invalid_pointer_pairs=2:detect_leaks=1:detect_stack_use_after_return=1:strict_string_checks=1:strict_init_order=1:check_initialization_order=1"
+            }
+        }, {
+            "name": "ubsan",
+            "displayName": "Undefined Behavior Sanitizer",
+            "configurePreset": "ubsan",
+            "inherits": "default"
+        }, {
+            "name": "tsan",
+            "displayName": "Thread Sanitizer",
+            "configurePreset": "tsan",
+            "inherits": "default"
+        }, {
+            "name": "msan",
+            "displayName": "Memory Sanitizer",
+            "configurePreset": "msan",
+            "inherits": "default"
+        }
+    ]
+}

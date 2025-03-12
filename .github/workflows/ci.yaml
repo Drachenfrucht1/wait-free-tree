@@ -1,0 +1,59 @@
+name: Tests
+on: 
+  push:
+    branches:
+      - main
+
+env:
+  CI: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+    - run: sudo apt update && sudo apt-get install libboost-all-dev
+    - run: cmake --preset asan
+    - run: cmake --build build-asan -j 4 -t correctness correctness_q correctness_msq
+    - name: Upload test binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: test_bin
+        path: build-asan/tests
+  run_msq_tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download test files
+      uses: actions/download-artifact@v4
+      with:
+        name: test_bin
+    - run: chmod +x correctness_msq
+    - name: Run tests
+      run: ./correctness_msq
+
+  run_condq_tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download test files
+      uses: actions/download-artifact@v4
+      with:
+        name: test_bin
+    - run: chmod +x correctness_q
+    - name: Run tests
+      run: ./correctness_q
+
+  run_tree_tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download test files
+      uses: actions/download-artifact@v4
+      with:
+        name: test_bin
+    - run: chmod +x correctness
+    - name: Run tests
+      run: ./correctness
